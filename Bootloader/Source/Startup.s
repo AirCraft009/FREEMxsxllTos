@@ -15,13 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+.section .entry makes it clear that this is the start
+the flags "ax" stand for:
+    a:
+        allocated(this needs space in memory
+    x:
+        executable()
+*/
+
 .section .entry, "ax"
+/*
+global ._start makes the _start label global so its clear what has to be
+run first
+*/
 .global ._start
+/*
+clarifies that boot_main is not to find in this assembly file but is
+defined somewhere else
+*/
 .extern boot_main
 
 _start:
+    /*
+    sets up the stack top
+    a1 is the stack pointer in xtensa
+    then it calls boot_main with calling convention 0 (simple no-windowed call),
+    meaning it saves the return adress in this case in a0
+    and sets up a basic call frame
+    */
     l32r a1, _stack_top
+    /*
+    goes into the C method
+    */
     call0 boot_main
 
 _stack_top:
-    .word 0x3FFD_FFFF
+    .word 0x4007FFFF
